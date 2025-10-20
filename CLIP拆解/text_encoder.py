@@ -173,7 +173,7 @@ def build_text_encoder(state_dict: dict):
             text_state_dict[key] = value
 
     # 将模型权重转换为 fp16
-    convert_weights(model)
+    # convert_weights(model)
     # 加载筛选出的文本模型权重
     model.load_state_dict(text_state_dict)
     # 返回设置为评估模式（.eval()）的模型

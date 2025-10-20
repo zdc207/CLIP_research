@@ -45,6 +45,8 @@ if isinstance(image_encoder, torch.nn.Module):  # 避免在 VisionTransformer �
 #    我们使用 clip 自带的下载器下载一张示例图片
 image = preprocess(Image.open("CLIP.png")).unsqueeze(0).to(device)
 text_inputs = clip.tokenize(["a diagram", "a dog", "a cat"]).to(device)
+print(type(image))
+print(type(text_inputs))
 
 
 
@@ -63,8 +65,12 @@ with torch.no_grad():
     text_features /= text_features.norm(dim=-1, keepdim=True)
 
     similarity = (100.0 * image_features @ text_features.T).softmax(dim=-1)
-    values, indices = similarity[0].topk(2)
+    # 与 clip.tokenize(...) 中的顺序保持一致
+    labels = ["a diagram", "a dog", "a cat"]
+    # 显示 top-k，这里 k 设为文本数量（也可以改为 1/2/3）
+    k = len(labels)
+    values, indices = similarity[0].topk(k)
 
     print("\n图文相似度计算结果:")
-    for value, index in zip(values, indices):
-        print(f"'{['a photo of a rocket', 'a photo of a puppy'][index]}': {100 * value.item():.2f}%")
+    for value, idx in zip(values, indices):
+        print(f"'{labels[idx.item()]}': {100 * value.item():.2f}%")
