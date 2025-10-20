@@ -12,7 +12,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 # 模型 "ViT-L/14@336px"
 MODEL_NAME = "ViT-L/14@336px"
 
-print(clip.available_models())
+
 
 # 1. 加载OpenAI官方的CLIP模型以下载权重
 print(f"正在从OpenAI下载原始CLIP模型和权重: {MODEL_NAME}...")
@@ -43,11 +43,10 @@ if isinstance(image_encoder, torch.nn.Module):  # 避免在 VisionTransformer �
 # 3. 准备输入数据
 #    图像输入: preprocess 对象会根据 "ViT-L/14@336px" 模型自动调整图像大小为 336x336
 #    我们使用 clip 自带的下载器下载一张示例图片
-image_url = clip._MODELS[original_model.visual.input_resolution]
-image = preprocess(Image.open(clip.clip._download(image_url, "./"))).unsqueeze(0).to(device)
+image = preprocess(Image.open("CLIP.png")).unsqueeze(0).to(device)
+text_inputs = clip.tokenize(["a diagram", "a dog", "a cat"]).to(device)
 
-#    文本输入
-text_inputs = clip.tokenize(["a photo of a rocket", "a photo of a puppy"]).to(device)
+
 
 # 4. 使用独立的编码器进行推理
 with torch.no_grad():
